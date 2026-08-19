@@ -1,0 +1,158 @@
+[
+  {
+    "id": "TC002",
+    "title": "Log in with email and password and reach the dashboard",
+    "description": "An existing user signs in with valid credentials and lands on the dashboard.",
+    "category": "User Login",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the dashboard is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Create a gig and see it in the gig list",
+    "description": "A signed-in admin creates a new gig with event details and a total fee, saves it, and the gig appears in the gig list with a status badge.",
+    "category": "Gig Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /gigs"
+      },
+      {
+        "type": "action",
+        "description": "Start creating a new gig"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the event name with a unique name such as TestSprite Verify Gig, and fill in the client, venue, city, event date, gig type, and total fee"
+      },
+      {
+        "type": "action",
+        "description": "Save the gig"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the gig list shows a gig row with the exact event name that was entered, with a status badge next to it"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Review a gig settlement and change its status",
+    "description": "A signed-in admin opens a gig detail, sees the settlement breakdown, changes the gig status, and the updated status is displayed.",
+    "category": "Gig Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /gigs"
+      },
+      {
+        "type": "action",
+        "description": "Open a gig detail from the gig list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the settlement breakdown section is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Change the gig status to a different status"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated gig status is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "View current members and crew lists in masters",
+    "description": "A signed-in admin opens the masters page and sees the members list and the crew list populated.",
+    "category": "Masters Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /masters"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the members list is displayed with member rows"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the crew list is displayed with crew rows"
+      }
+    ],
+    "priority": "High"
+  }
+]
