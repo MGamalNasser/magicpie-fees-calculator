@@ -116,17 +116,6 @@ export interface AppData {
   productionRoles: ProductionRole[]
 }
 
-export interface InviteRow {
-  id: string
-  email: string
-  role: "admin" | "member"
-  memberName: string | null
-  status: "pending" | "accepted" | "revoked"
-  expiresAt: string
-  createdAt: string
-  acceptedAt: string | null
-}
-
 export interface AuditLogRow {
   id: string
   actorName: string

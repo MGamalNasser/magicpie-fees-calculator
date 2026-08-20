@@ -46,7 +46,6 @@ export const CREW_ROLE_SUGGESTIONS = [
 ]
 
 export const GIG_TYPES = [
-  "Wedding",
   "Private Event",
   "Festival",
   "Corporate",

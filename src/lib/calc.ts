@@ -52,11 +52,17 @@ export function computeSettlement(gig: Gig, state: AppData): Settlement {
 
   const mealTotal = crewLines.reduce((s, l) => s + l.meal, 0)
 
+  const productionRoleNames = new Set(
+    state.productionRoles.filter((r) => r.active).map((r) => r.name),
+  )
+  const isProduction = (category: string) =>
+    PRODUCTION_CATEGORIES.includes(category) || productionRoleNames.has(category)
+
   const productionTotal = gig.expenses
-    .filter((e) => PRODUCTION_CATEGORIES.includes(e.category))
+    .filter((e) => isProduction(e.category))
     .reduce((s, e) => s + (e.amount || 0), 0)
   const otherTotal = gig.expenses
-    .filter((e) => !PRODUCTION_CATEGORIES.includes(e.category))
+    .filter((e) => !isProduction(e.category))
     .reduce((s, e) => s + (e.amount || 0), 0)
 
   const expensesTotal = crewTotal + mealTotal + productionTotal + otherTotal

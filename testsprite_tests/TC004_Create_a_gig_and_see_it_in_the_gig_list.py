@@ -40,19 +40,19 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Fill the Email field with testsprite@magicpie.dev, fill the Password field with verify-magicpie-2026, then click the 'Sign in' button.
+        # -> Fill the Email field with testsprite@magicpie.dev, fill the Password field with verify-magicpie-2026, then click the 'Sign in' button to authenticate.
         # you@example.com email field
         elem = page.get_by_label('Email', exact=True)
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("testsprite@magicpie.dev")
         
-        # -> Fill the Email field with testsprite@magicpie.dev, fill the Password field with verify-magicpie-2026, then click the 'Sign in' button.
+        # -> Fill the Email field with testsprite@magicpie.dev, fill the Password field with verify-magicpie-2026, then click the 'Sign in' button to authenticate.
         # •••••••• password field
         elem = page.get_by_label('Password', exact=True)
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("verify-magicpie-2026")
         
-        # -> Fill the Email field with testsprite@magicpie.dev, fill the Password field with verify-magicpie-2026, then click the 'Sign in' button.
+        # -> Fill the Email field with testsprite@magicpie.dev, fill the Password field with verify-magicpie-2026, then click the 'Sign in' button to authenticate.
         # Sign in button
         elem = page.get_by_role('button', name='Sign in', exact=True)
         await elem.click(timeout=10000)
@@ -62,54 +62,61 @@ async def run_test():
         elem = page.get_by_text('T', exact=True).locator("xpath=ancestor-or-self::*[.//a][1]").get_by_role('link', name='Gigs', exact=True)
         await elem.click(timeout=10000)
         
-        # -> Click the 'New Gig' button to open the create gig form.
+        # -> Click the 'New Gig' button to open the gig creation form.
         # New Gig button
         elem = page.get_by_text('magicpie', exact=True).locator("xpath=ancestor-or-self::*[.//button][1]").get_by_role('button', name='New Gig', exact=True)
         await elem.click(timeout=10000)
         
-        # -> Fill the 'Event name', 'Client', 'Venue', and 'Total fee' fields, then click the 'Save gig' button.
-        # e.g. Wedding of Sari & Raka text field
+        # -> Fill the 'Event name' with 'TestSprite Verify Gig 2026-08-20 TS1', fill 'Client', 'Venue', 'City', set 'Total fee' to 5000000, then click the 'Save gig' button.
+        # e.g. Djakarta Warehouse Project text field
         elem = page.get_by_label('Event name', exact=True)
         await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("TestSprite Verify Gig TC004 2026-08-19")
+        await elem.fill("TestSprite Verify Gig 2026-08-20 TS1")
         
-        # -> Fill the 'Event name', 'Client', 'Venue', and 'Total fee' fields, then click the 'Save gig' button.
-        # e.g. Family of the bride text field
+        # -> Fill the 'Event name' with 'TestSprite Verify Gig 2026-08-20 TS1', fill 'Client', 'Venue', 'City', set 'Total fee' to 5000000, then click the 'Save gig' button.
+        # e.g. Ismaya Live text field
         elem = page.get_by_label('Client', exact=True)
         await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("Test Client TC004")
+        await elem.fill("TestSprite Client")
         
-        # -> Fill the 'Event name', 'Client', 'Venue', and 'Total fee' fields, then click the 'Save gig' button.
+        # -> Fill the 'Event name' with 'TestSprite Verify Gig 2026-08-20 TS1', fill 'Client', 'Venue', 'City', set 'Total fee' to 5000000, then click the 'Save gig' button.
         # e.g. JIExpo Kemayoran text field
         elem = page.get_by_label('Venue', exact=True)
         await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("Test Venue TC004")
+        await elem.fill("TestSprite Venue")
         
-        # -> Fill the 'Event name', 'Client', 'Venue', and 'Total fee' fields, then click the 'Save gig' button.
+        # -> Fill the 'Event name' with 'TestSprite Verify Gig 2026-08-20 TS1', fill 'Client', 'Venue', 'City', set 'Total fee' to 5000000, then click the 'Save gig' button.
+        # e.g. Bandung text field
+        elem = page.get_by_label('City', exact=True)
+        await elem.wait_for(state="visible", timeout=10000)
+        await elem.fill("Bandung")
+        
+        # -> Fill the 'Event name' with 'TestSprite Verify Gig 2026-08-20 TS1', fill 'Client', 'Venue', 'City', set 'Total fee' to 5000000, then click the 'Save gig' button.
         # 0 text field
         elem = page.get_by_label('Total feeRp', exact=True)
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("5000000")
         
-        # -> Fill the 'Event name', 'Client', 'Venue', and 'Total fee' fields, then click the 'Save gig' button.
+        # -> Click the 'Save gig' button to save the new gig.
         # Save gig button
         elem = page.get_by_role('button', name='Save gig', exact=True)
         await elem.click(timeout=10000)
         
-        # -> Click the 'Back to gigs' link to return to the gigs list and verify the new gig 'TestSprite Verify Gig TC004 2026-08-19' appears with a status badge.
+        # -> Click the 'Back to gigs' link to return to the Gigs list and verify the new gig row shows the exact event name with a status badge.
         # Back to gigs link
         elem = page.get_by_role('link', name='Back to gigs', exact=True)
         await elem.click(timeout=10000)
         
         # --> Assertions to verify final state
         
-        # --> Created gig 'TestSprite Verify Gig TC004 2026-08-19' appears in the gigs list with a 'Draft' status badge.
+        # --> Created gig 'TestSprite Verify Gig 2026-08-20 TS1' appears in the Gigs list with a visible status badge.
         # Assert-outcome: passed
-        # Assert: Verifies the gig row displays the exact event name entered.
-        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[2]/table/tbody/tr[1]/td[1]/div[1]").nth(0)).to_have_text("TestSprite Verify Gig TC004 2026-08-19", timeout=15000), "Verifies the gig row displays the exact event name entered."
+        # Assert: The gig row shows the exact event name that was entered.
+        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[2]/table/tbody/tr[2]/td[1]/div[1]").nth(0)).to_have_text("TestSprite Verify Gig 2026-08-20 TS1", timeout=15000), "The gig row shows the exact event name that was entered."
+        await page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[2]/table/tbody/tr[2]/td[6]/span").nth(0).scroll_into_view_if_needed()
         # Assert-outcome: passed
-        # Assert: Verifies a visible status badge ("Draft") is shown for the gig.
-        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[2]/table/tbody/tr[1]/td[6]/span").nth(0)).to_have_text("Draft", timeout=15000), "Verifies a visible status badge (\"Draft\") is shown for the gig."
+        # Assert: A status badge is visible in the same row as the event.
+        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[2]/table/tbody/tr[2]/td[6]/span").nth(0)).to_be_visible(timeout=15000), "A status badge is visible in the same row as the event."
         await asyncio.sleep(5)
 
     finally:

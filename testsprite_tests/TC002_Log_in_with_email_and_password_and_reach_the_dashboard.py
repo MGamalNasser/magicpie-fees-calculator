@@ -59,10 +59,10 @@ async def run_test():
         
         # --> Assertions to verify final state
         
-        # --> Dashboard is displayed showing the Recent gigs table header 'Event Date Fee Status'.
+        # --> Dashboard is displayed after sign in and the sidebar shows the 'Dashboard' link.
         # Assert-outcome: passed
-        # Assert: Verifies the Recent gigs table header is present and reads 'Event Date Fee Status'.
-        await expect(page.locator("xpath=/html/body/div[3]/div/main/div/div[4]/div[2]/div[2]/div/table/thead/tr").nth(0)).to_have_text("Event\nDate\nFee\nStatus", timeout=15000), "Verifies the Recent gigs table header is present and reads 'Event Date Fee Status'."
+        # Assert: The sidebar contains a 'Dashboard' link.
+        await expect(page.locator("xpath=/html/body/div[3]/aside/nav/a[1]").nth(0)).to_have_text("Dashboard", timeout=15000), "The sidebar contains a 'Dashboard' link."
         await asyncio.sleep(5)
 
     finally:

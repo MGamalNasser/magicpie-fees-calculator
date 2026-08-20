@@ -1213,7 +1213,7 @@ body {
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Date</div>
-          <div class="metadata-value text-body">8/19/2026</div>
+          <div class="metadata-value text-body">8/20/2026</div>
         </div>
         <div class="metadata-row">
           <div class="metadata-label text-body-medium">Prepared by</div>
@@ -1234,15 +1234,14 @@ body {
         
         <div class="coverage-summary">
           <ul class="coverage-list text-body">
-            <li><span class="coverage-highlight">6/6</span> of tests passed</li>
+            <li><span class="coverage-highlight">4/4</span> of tests passed</li>
             <li><span class="coverage-highlight">Key gaps / risks:</span>
             
               <ul>
-<li><strong>Not yet covered by an executed test:</strong> itinerary template CRUD, settings update, invite send/revoke from settings, audit log view, PDF/Excel export (OS-native download — excluded by design), member payout page content (created implicitly via TC001 landing), empty states.</li>
-<li><strong>Role-based UI</strong> (member vs admin navigation) was observed and verified only indirectly; dedicated member-access tests could be added.</li>
-<li><strong>Environment:</strong> tests ran against the local dev SQLite DB; seeded fixture data (tenant <code>giLbAy6prWNNi6RKDfBq9BLnu0mBKV2I</code>) was added for the fixture account: admin role, 5 members, 5 crew, 2 demo gigs + the 1 gig created by TC004.</li>
-<li><strong>Rerun hazard:</strong> TC001's invite token is single-use; reruns require minting a fresh invite.</li>
-<li>First run of TC004 was a <strong>false positive</strong> (member account could not reach <code>/gigs</code>, assertion still passed). Fixed by strengthening the assertion to require the exact event name in the list; the rerun verified the gig row in the DB.</li>
+<li><strong>Invites UI coverage removed:</strong> The invite acceptance flow (TC001) and the Settings &quot;Invites&quot; card are intentionally removed as a product decision, so there is no longer any test covering invite creation/acceptance. No residual invite code or <code>/invite</code> route remains (<code>/invite</code> now redirects to login).</li>
+<li><strong>Credential injection:</strong> The first suite run failed all 4 tests because the generated scripts substituted fallback credentials (<code>example@gmail.com</code> / <code>password123</code>) instead of the fixture account. The fix was a one-time tightening re-run with explicit credentials (<code>testsprite@magicpie.dev</code> / <code>verify-magicpie-2026</code>), after which everything passed. The plan steps use <code>{{LOGIN_USER}}</code>/<code>{{LOGIN_PASSWORD}}</code> placeholders — keep the fixture creds injected on future runs.</li>
+<li><strong>Member-role regression window:</strong> Removing invites removes the only self-serve path that creates <code>member</code> accounts and links <code>members.accountUserId</code>. The two pre-existing member accounts still log in to <code>/me</code>, but no new member accounts can be created without a DB insert. Confirmed acceptable for this deployment.</li>
+<li><strong>Local-only verification:</strong> All runs target the local dev server via the MCP tunnel; there is no deployed environment for this project yet, so verification is limited to the tunnelled localhost run.</li>
 </ul>
 
             </li>
@@ -1268,15 +1267,15 @@ body {
           <div class="table-rows">
             
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement: Authentication & Access Control</span></div>
-              <div class="table-cell"><span class="text-body">3</span></div>
-              <div class="table-cell"><span class="text-body">3</span></div>
+              <div class="table-cell"><span class="text-body">Requirement 1 — User Login</span></div>
+              <div class="table-cell"><span class="text-body">1</span></div>
+              <div class="table-cell"><span class="text-body">1</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
             </div>
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement: Gig Management</span></div>
+              <div class="table-cell"><span class="text-body">Requirement 2 — Gig Management</span></div>
               <div class="table-cell"><span class="text-body">2</span></div>
               <div class="table-cell"><span class="text-body">2</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1284,7 +1283,7 @@ body {
         
 
             <div class="table-row">
-              <div class="table-cell"><span class="text-body">Requirement: Masters Management</span></div>
+              <div class="table-cell"><span class="text-body">Requirement 3 — Masters Management</span></div>
               <div class="table-cell"><span class="text-body">1</span></div>
               <div class="table-cell"><span class="text-body">1</span></div>
               <div class="table-cell"><span class="text-body">0</span></div>
@@ -1310,13 +1309,13 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement: Authentication & Access Control</h3>
+              <h3 class="title-requirement">Requirement 1 — User Login</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
                 <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>3/3</span>
+              <span>1/1</span>
             </div>
               </div>
               <p class="text-body-medium requirement-description">Proper error handling for API calls and invalid data scenarios.</p>
@@ -1332,58 +1331,13 @@ body {
             <div class="test-wrapper">
 <div class="test-card">
                 <div class="test-header">
-                  <h4 class="text-body-medium">TC001 Accept an invite and reach the member page</h4>
-                </div>
-                <div class="test-content">
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Test Code</div>
-                    <div class="test-field-value text-body">
-                      <a href="./null" class="text-link">null</a>
-                    </div>
-                  </div>
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Test Error</div>
-                    <div class="test-field-value text-body">N/A</div>
-                  </div>
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
-                    <div class="test-field-value text-body">
-                      <a href="null" class="text-link">View Results</a>
-                    </div>
-                  </div>
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Status</div>
-                    <div class="test-field-value">
-                      <div class="status-wrapper">
-                <div class="status-icon">
-                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
-                        <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <span class="text-body status-pass">Pass</span>
-            </div>
-                    </div>
-                  </div>
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Severity</div>
-                    <div class="test-field-value text-body">N/A</div>
-                  </div>
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
-                    <div class="test-field-value text-body">N/A</div>
-                  </div>
-                </div>
-              </div>
-<div class="test-card">
-                <div class="test-header">
                   <h4 class="text-body-medium">TC002 Log in with email and password and reach the dashboard</h4>
                 </div>
                 <div class="test-content">
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Test Code</div>
                     <div class="test-field-value text-body">
-                      <a href="./null" class="text-link">null</a>
+                      <a href="./TC002_Log_in_with_email_and_password_and_reach_the_dashboard.py" class="text-link">TC002_Log_in_with_email_and_password_and_reach_the_dashboard.py</a>
                     </div>
                   </div>
                   <div class="test-field">
@@ -1393,7 +1347,7 @@ body {
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Test Visualization and Result</div>
                     <div class="test-field-value text-body">
-                      <a href="null" class="text-link">View Results</a>
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/845eea6f-dc4c-4d09-aed7-0b9854c4ad3f/test/11427e30-2459-4061-8b68-7012f766f8b6" class="text-link">View Results</a>
                     </div>
                   </div>
                   <div class="test-field">
@@ -1416,52 +1370,7 @@ body {
                   </div>
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Analysis / Findings</div>
-                    <div class="test-field-value text-body">N/A</div>
-                  </div>
-                </div>
-              </div>
-<div class="test-card">
-                <div class="test-header">
-                  <h4 class="text-body-medium">TC003 Show an error for invalid sign in</h4>
-                </div>
-                <div class="test-content">
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Test Code</div>
-                    <div class="test-field-value text-body">
-                      <a href="./null" class="text-link">null</a>
-                    </div>
-                  </div>
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Test Error</div>
-                    <div class="test-field-value text-body">N/A</div>
-                  </div>
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Test Visualization and Result</div>
-                    <div class="test-field-value text-body">
-                      <a href="null" class="text-link">View Results</a>
-                    </div>
-                  </div>
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Status</div>
-                    <div class="test-field-value">
-                      <div class="status-wrapper">
-                <div class="status-icon">
-                    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
-                        <path d="M5.59961 8.00002L7.19961 9.60002L10.3996 6.40002" stroke="#19C379" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <span class="text-body status-pass">Pass</span>
-            </div>
-                    </div>
-                  </div>
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Severity</div>
-                    <div class="test-field-value text-body">N/A</div>
-                  </div>
-                  <div class="test-field">
-                    <div class="test-field-label text-body-medium">Analysis / Findings</div>
-                    <div class="test-field-value text-body">N/A</div>
+                    <div class="test-field-value text-body">Email/password sign-in succeeds with the fixture admin account and lands on the dashboard. Confirms the auth flow (Google removed, email/password only) and the shared-workspace admin session still work after the invites removal.</div>
                   </div>
                 </div>
               </div>
@@ -1473,7 +1382,7 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement: Gig Management</h3>
+              <h3 class="title-requirement">Requirement 2 — Gig Management</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1501,7 +1410,7 @@ body {
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Test Code</div>
                     <div class="test-field-value text-body">
-                      <a href="./null" class="text-link">null</a>
+                      <a href="./TC004_Create_a_gig_and_see_it_in_the_gig_list.py" class="text-link">TC004_Create_a_gig_and_see_it_in_the_gig_list.py</a>
                     </div>
                   </div>
                   <div class="test-field">
@@ -1511,7 +1420,7 @@ body {
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Test Visualization and Result</div>
                     <div class="test-field-value text-body">
-                      <a href="null" class="text-link">View Results</a>
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/845eea6f-dc4c-4d09-aed7-0b9854c4ad3f/test/78993a26-cd52-4d50-9c0d-aff2cccc1a75" class="text-link">View Results</a>
                     </div>
                   </div>
                   <div class="test-field">
@@ -1534,7 +1443,7 @@ body {
                   </div>
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Analysis / Findings</div>
-                    <div class="test-field-value text-body">N/A</div>
+                    <div class="test-field-value text-body">A signed-in admin creates a new gig with event details and a total fee; the saved gig appears in the gig list with a status badge. Gig creation and list rendering are intact.</div>
                   </div>
                 </div>
               </div>
@@ -1546,7 +1455,7 @@ body {
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Test Code</div>
                     <div class="test-field-value text-body">
-                      <a href="./null" class="text-link">null</a>
+                      <a href="./TC005_Review_a_gig_settlement_and_change_its_status.py" class="text-link">TC005_Review_a_gig_settlement_and_change_its_status.py</a>
                     </div>
                   </div>
                   <div class="test-field">
@@ -1556,7 +1465,7 @@ body {
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Test Visualization and Result</div>
                     <div class="test-field-value text-body">
-                      <a href="null" class="text-link">View Results</a>
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/845eea6f-dc4c-4d09-aed7-0b9854c4ad3f/test/96579b7c-ff68-47c7-a028-c0599bbfff06" class="text-link">View Results</a>
                     </div>
                   </div>
                   <div class="test-field">
@@ -1579,7 +1488,7 @@ body {
                   </div>
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Analysis / Findings</div>
-                    <div class="test-field-value text-body">N/A</div>
+                    <div class="test-field-value text-body">An admin opens a gig detail, sees the settlement breakdown, changes the gig status, and the updated status is displayed. Settlement math and status transitions are intact.</div>
                   </div>
                 </div>
               </div>
@@ -1591,7 +1500,7 @@ body {
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <div class="requirement-content">
                                           <div class="requirement-title-row">
-              <h3 class="title-requirement">Requirement: Masters Management</h3>
+              <h3 class="title-requirement">Requirement 3 — Masters Management</h3>
                 <div class="requirement-status-tag status-success">
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.99961" cy="7.99998" r="6.4" fill="#10A363" fill-opacity="0.2"/>
@@ -1619,7 +1528,7 @@ body {
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Test Code</div>
                     <div class="test-field-value text-body">
-                      <a href="./null" class="text-link">null</a>
+                      <a href="./TC006_View_current_members_and_crew_lists_in_masters.py" class="text-link">TC006_View_current_members_and_crew_lists_in_masters.py</a>
                     </div>
                   </div>
                   <div class="test-field">
@@ -1629,7 +1538,7 @@ body {
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Test Visualization and Result</div>
                     <div class="test-field-value text-body">
-                      <a href="null" class="text-link">View Results</a>
+                      <a href="https://www.testsprite.com/dashboard/mcp/tests/845eea6f-dc4c-4d09-aed7-0b9854c4ad3f/test/f864df78-50e0-4c9b-8495-4131c92a8c4c" class="text-link">View Results</a>
                     </div>
                   </div>
                   <div class="test-field">
@@ -1652,7 +1561,7 @@ body {
                   </div>
                   <div class="test-field">
                     <div class="test-field-label text-body-medium">Analysis / Findings</div>
-                    <div class="test-field-value text-body">N/A</div>
+                    <div class="test-field-value text-body">A signed-in admin opens the masters page and sees both the members list and the crew list populated. Master-data views are intact after the invites removal.</div>
                   </div>
                 </div>
               </div>

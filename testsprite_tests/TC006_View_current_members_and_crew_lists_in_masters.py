@@ -57,24 +57,24 @@ async def run_test():
         elem = page.get_by_role('button', name='Sign in', exact=True)
         await elem.click(timeout=10000)
         
-        # -> Click the 'Masters' link in the left navigation to open the Masters page.
+        # -> Click the 'Masters' link in the left sidebar to open the Masters page.
         # Masters link
         elem = page.get_by_text('T', exact=True).locator("xpath=ancestor-or-self::*[.//a][1]").get_by_role('link', name='Masters', exact=True)
         await elem.click(timeout=10000)
         
         # --> Assertions to verify final state
         
-        # --> Members list is displayed and shows member rows (for example, 'Bayu').
+        # --> Members list is visible and populated (members table shows rows).
         await page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[2]/div/table/tbody/tr[1]").nth(0).scroll_into_view_if_needed()
         # Assert-outcome: passed
-        # Assert: The first member row (Bayu) is visible in the members table.
-        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[2]/div/table/tbody/tr[1]").nth(0)).to_be_visible(timeout=15000), "The first member row (Bayu) is visible in the members table."
+        # Assert: Verify the members table has at least one visible member row.
+        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[2]/div/table/tbody/tr[1]").nth(0)).to_be_visible(timeout=15000), "Verify the members table has at least one visible member row."
         
-        # --> Crew list is displayed and shows crew rows (for example, 'Farras').
+        # --> Crew list is visible and populated (crew table shows rows).
         await page.locator("xpath=/html/body/div[2]/div/main/div/div[3]/div[2]/div/table/tbody/tr[1]").nth(0).scroll_into_view_if_needed()
         # Assert-outcome: passed
-        # Assert: The first crew row (Farras) is visible in the crew table.
-        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[3]/div[2]/div/table/tbody/tr[1]").nth(0)).to_be_visible(timeout=15000), "The first crew row (Farras) is visible in the crew table."
+        # Assert: Verify the crew table has at least one visible crew row.
+        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[3]/div[2]/div/table/tbody/tr[1]").nth(0)).to_be_visible(timeout=15000), "Verify the crew table has at least one visible crew row."
         await asyncio.sleep(5)
 
     finally:

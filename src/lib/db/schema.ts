@@ -214,41 +214,10 @@ export const productionRoles = sqliteTable(
   (t) => [index("production_roles_user_idx").on(t.userId)],
 )
 
-export const invites = sqliteTable(
-  "invites",
-  {
-    id: text("id").primaryKey(),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    email: text("email").notNull(),
-    role: text("role", { enum: ["admin", "member"] }).notNull().default("member"),
-    memberId: text("member_id"),
-    tokenHash: text("token_hash").notNull(),
-    status: text("status", { enum: ["pending", "accepted", "revoked"] })
-      .notNull()
-      .default("pending"),
-    expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
-    createdAt: integer("created_at", { mode: "timestamp_ms" })
-      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-      .notNull(),
-    acceptedAt: integer("accepted_at", { mode: "timestamp_ms" }),
-  },
-  (t) => [
-    index("invites_email_idx").on(t.email),
-    index("invites_token_idx").on(t.tokenHash),
-  ],
-)
-
 export const productionRolesRelations = relations(productionRoles, ({ one }) => ({
   owner: one(user, { fields: [productionRoles.userId], references: [user.id] }),
 }))
 
-export const invitesRelations = relations(invites, ({ one }) => ({
-  owner: one(user, { fields: [invites.userId], references: [user.id] }),
-}))
-
-// relations
 export const membersRelations = relations(members, ({ one }) => ({
   owner: one(user, { fields: [members.userId], references: [user.id] }),
   accountUser: one(user, { fields: [members.accountUserId], references: [user.id] }),

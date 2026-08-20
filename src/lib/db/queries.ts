@@ -11,6 +11,7 @@ import {
   members,
   productionRoles,
   settings,
+  user,
 } from "./schema"
 import type {
   AppData,
@@ -21,6 +22,15 @@ import type {
   Settings,
 } from "@/lib/types"
 import { DEFAULT_SETTINGS } from "@/lib/rules"
+
+export async function getWorkspaceOwnerId(): Promise<string | null> {
+  const row = await db
+    .select({ id: user.id })
+    .from(user)
+    .where(eq(user.role, "superadmin"))
+    .get()
+  return row?.id ?? null
+}
 
 export async function getProductionRoles(userId: string) {
   return db

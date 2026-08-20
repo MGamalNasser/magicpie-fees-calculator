@@ -1,6 +1,5 @@
 "use server"
 
-import { createHash, randomBytes } from "node:crypto"
 import { and, desc, eq, notInArray } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
@@ -13,7 +12,6 @@ import {
   gigCrew,
   gigMembers,
   gigs,
-  invites,
   itineraryTemplateItems,
   itineraryTemplates,
   members,
@@ -25,15 +23,13 @@ import type {
   AppData,
   AuditLogRow,
   Gig,
-  InviteRow,
   ItineraryTemplate,
   MyPayoutsData,
   ProductionRole,
   Settings,
 } from "@/lib/types"
-import { getAppData, getMyPayouts } from "@/lib/db/queries"
+import { getAppData, getMyPayouts, getWorkspaceOwnerId } from "@/lib/db/queries"
 import { seedTenant } from "@/lib/db/seed"
-import { sendInviteEmail } from "@/lib/email"
 
 async function requireUser(): Promise<string> {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -45,7 +41,8 @@ async function requireAdmin(): Promise<string> {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session?.user?.id) throw new Error("Unauthorized")
   if (session.user.role === "member") throw new Error("Unauthorized")
-  return session.user.id
+  const ownerId = await getWorkspaceOwnerId()
+  return ownerId ?? session.user.id
 }
 
 function revalidateAll() {
@@ -55,10 +52,6 @@ function revalidateAll() {
   revalidatePath("/masters")
   revalidatePath("/settings")
   revalidatePath("/me")
-}
-
-function hashToken(token: string): string {
-  return createHash("sha256").update(token).digest("hex")
 }
 
 const AUDIT_LOG_LIMIT = 500
@@ -610,149 +603,6 @@ export async function setupAdminAction(input: {
   return { ok: true }
 }
 
-export async function sendInviteAction(input: {
-  email: string
-  memberId?: string
-}): Promise<ActionResult> {
-  const userId = await requireAdmin()
-  const email = input.email.trim().toLowerCase()
-  if (!EMAIL_RE.test(email)) return { ok: false, error: "Invalid email" }
-
-  await db
-    .update(invites)
-    .set({ status: "revoked" })
-    .where(and(eq(invites.email, email), eq(invites.status, "pending")))
-
-  const token = randomBytes(32).toString("hex")
-  const inviteId = crypto.randomUUID()
-  await db.insert(invites).values({
-    id: inviteId,
-    userId,
-    email,
-    role: "member",
-    memberId: input.memberId || null,
-    tokenHash: hashToken(token),
-    status: "pending",
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-  })
-
-  const base = process.env.BETTER_AUTH_URL || "http://localhost:3000"
-  const link = `${base}/invite?token=${token}`
-
-  const memberName = input.memberId
-    ? (
-        await db
-          .select({ name: members.name })
-          .from(members)
-          .where(and(eq(members.id, input.memberId), eq(members.userId, userId)))
-          .get()
-      )?.name ?? ""
-    : ""
-
-  const result = await sendInviteEmail({ to: email, name: memberName, link })
-  await logAudit(userId, "invite.send", { entityName: memberName || email, detail: email })
-  revalidatePath("/settings")
-  return { ok: true, devLink: result.devLink }
-}
-
-export async function acceptInviteAction(input: {
-  token: string
-  name: string
-  password: string
-}): Promise<ActionResult> {
-  const invite = await db
-    .select()
-    .from(invites)
-    .where(eq(invites.tokenHash, hashToken(input.token)))
-    .get()
-  if (!invite) return { ok: false, error: "This invite is invalid or has expired." }
-  if (invite.status !== "pending") {
-    return { ok: false, error: "This invite has already been accepted." }
-  }
-  if (invite.expiresAt.getTime() < Date.now()) {
-    return { ok: false, error: "This invite is invalid or has expired." }
-  }
-  const existing = await db
-    .select({ id: user.id })
-    .from(user)
-    .where(eq(user.email, invite.email.toLowerCase()))
-    .get()
-  if (existing) {
-    return { ok: false, error: "This email already has an account." }
-  }
-
-  const res = await auth.api.signUpEmail({
-    body: { name: input.name, email: invite.email, password: input.password },
-  })
-  if (!res?.token) {
-    return { ok: false, error: "Something went wrong. Please try again." }
-  }
-  const created = await db
-    .select({ id: user.id })
-    .from(user)
-    .where(eq(user.email, invite.email.toLowerCase()))
-    .get()
-  if (!created) {
-    return { ok: false, error: "Something went wrong. Please try again." }
-  }
-  await db.update(user).set({ role: "member" }).where(eq(user.id, created.id))
-  if (invite.memberId) {
-    await db
-      .update(members)
-      .set({ accountUserId: created.id })
-      .where(and(eq(members.id, invite.memberId), eq(members.userId, invite.userId)))
-  }
-  await db
-    .update(invites)
-    .set({ status: "accepted", acceptedAt: new Date() })
-    .where(eq(invites.id, invite.id))
-  revalidatePath("/me")
-  return { ok: true }
-}
-
-export async function getInvitesAction(): Promise<InviteRow[]> {
-  const userId = await requireAdmin()
-  const rows = await db
-    .select({
-      id: invites.id,
-      email: invites.email,
-      role: invites.role,
-      memberName: members.name,
-      status: invites.status,
-      expiresAt: invites.expiresAt,
-      createdAt: invites.createdAt,
-      acceptedAt: invites.acceptedAt,
-    })
-    .from(invites)
-    .leftJoin(members, eq(invites.memberId, members.id))
-    .where(eq(invites.userId, userId))
-    .orderBy(desc(invites.createdAt))
-    .all()
-  return rows.map((r) => ({
-    id: r.id,
-    email: r.email,
-    role: r.role,
-    memberName: r.memberName ?? null,
-    status: r.status,
-    expiresAt: r.expiresAt.toISOString(),
-    createdAt: r.createdAt.toISOString(),
-    acceptedAt: r.acceptedAt ? r.acceptedAt.toISOString() : null,
-  }))
-}
-
-export async function revokeInviteAction(id: string): Promise<{ ok: true }> {
-  const userId = await requireAdmin()
-  const row = await db
-    .select({ email: invites.email })
-    .from(invites)
-    .where(eq(invites.id, id))
-    .get()
-  await db.update(invites).set({ status: "revoked" }).where(eq(invites.id, id))
-  if (row) await logAudit(userId, "invite.revoke", { entityName: row.email, detail: row.email })
-  revalidatePath("/settings")
-  return { ok: true }
-}
-
 export async function saveProductionRoleAction(input: ProductionRole): Promise<{ ok: true }> {
   const userId = await requireAdmin()
   const existing = await db
@@ -800,32 +650,6 @@ export async function deleteProductionRoleAction(id: string): Promise<{ ok: true
 export async function getMyPayoutsAction(): Promise<MyPayoutsData> {
   const userId = await requireUser()
   return getMyPayouts(userId)
-}
-
-export async function getInviteInfoAction(token: string): Promise<{
-  email: string
-  memberName: string | null
-} | null> {
-  const invite = await db
-    .select()
-    .from(invites)
-    .where(eq(invites.tokenHash, hashToken(token)))
-    .get()
-  if (!invite || invite.status !== "pending" || invite.expiresAt.getTime() < Date.now()) {
-    return null
-  }
-  let memberName: string | null = null
-  if (invite.memberId) {
-    memberName =
-      (
-        await db
-          .select({ name: members.name })
-          .from(members)
-          .where(eq(members.id, invite.memberId))
-          .get()
-      )?.name ?? null
-  }
-  return { email: invite.email, memberName }
 }
 
 export async function logExportAction(

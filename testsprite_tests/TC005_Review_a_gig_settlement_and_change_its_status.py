@@ -40,89 +40,71 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Fill the 'Email' field with testsprite@magicpie.dev, fill the 'Password' field with verify-magicpie-2026, then click the 'Sign in' button.
+        # -> Fill the Email field with testsprite@magicpie.dev, the Password field with verify-magicpie-2026, then click the 'Sign in' button to log in.
         # you@example.com email field
         elem = page.get_by_label('Email', exact=True)
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("testsprite@magicpie.dev")
         
-        # -> Fill the 'Email' field with testsprite@magicpie.dev, fill the 'Password' field with verify-magicpie-2026, then click the 'Sign in' button.
+        # -> Fill the Email field with testsprite@magicpie.dev, the Password field with verify-magicpie-2026, then click the 'Sign in' button to log in.
         # •••••••• password field
         elem = page.get_by_label('Password', exact=True)
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("verify-magicpie-2026")
         
-        # -> Fill the 'Email' field with testsprite@magicpie.dev, fill the 'Password' field with verify-magicpie-2026, then click the 'Sign in' button.
+        # -> Fill the Email field with testsprite@magicpie.dev, the Password field with verify-magicpie-2026, then click the 'Sign in' button to log in.
         # Sign in button
         elem = page.get_by_role('button', name='Sign in', exact=True)
         await elem.click(timeout=10000)
         
-        # -> Click the 'Gigs' link in the left navigation to open the Gigs page.
+        # -> Click the 'Gigs' link in the sidebar to open the gigs list page.
         # Gigs link
         elem = page.get_by_text('T', exact=True).locator("xpath=ancestor-or-self::*[.//a][1]").get_by_role('link', name='Gigs', exact=True)
         await elem.click(timeout=10000)
         
-        # -> Open the gig 'TestSprite Fixture Gig 1' from the gigs list.
-        # TestSprite Fixture Gig 1
-        elem = page.get_by_text('TestSprite Fixture Gig 1', exact=True)
+        # -> Open the gig detail for the event 'Univ Pancasila' by clicking its event name in the list.
+        # Univ Pancasila
+        elem = page.get_by_text('Univ Pancasila', exact=True)
         await elem.click(timeout=10000)
         
-        # -> Verify the 'Settlement' section is visible on the page and click the status dropdown labeled 'Confirmed' to open status options.
+        # -> Open the status dropdown labeled 'Draft' to reveal status options (Draft, Confirmed, Paid, Cancelled).
         # Draft Confirmed Paid Cancelled dropdown
         elem = page.get_by_text('Draft Confirmed Paid Cancelled', exact=True)
         await elem.click(timeout=10000)
         
-        # -> Change the gig status to 'Paid' using the status dropdown and verify the page shows 'Paid'.
+        # -> Select 'Confirmed' from the status dropdown (currently showing 'Draft') and verify the page displays 'Confirmed' as the updated status.
         # Draft Confirmed Paid Cancelled dropdown
         elem = page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div/div[2]/div/select").nth(0)
         await elem.wait_for(state="visible", timeout=10000)
         await elem.select_option("")
         
-        # -> Change the gig status by selecting 'Confirmed' from the status dropdown on the gig detail page.
-        # Draft Confirmed Paid Cancelled dropdown
-        elem = page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div/div[2]/div/select").nth(0)
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.select_option("")
-        
-        # -> Open the status dropdown labeled 'Paid' on the gig detail page.
+        # -> Open the status dropdown that is currently showing 'Confirmed' so the available status options (Draft, Confirmed, Paid, Cancelled) become visible.
         # Draft Confirmed Paid Cancelled dropdown
         elem = page.get_by_text('Draft Confirmed Paid Cancelled', exact=True)
         await elem.click(timeout=10000)
         
-        # -> Select 'Paid' from the status dropdown to change the gig status.
+        # -> Select the 'Paid' option from the status dropdown so the gig status changes from 'Confirmed' to 'Paid' and then check that 'Paid' appears in the header badge and Members area.
         # Draft Confirmed Paid Cancelled dropdown
         elem = page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div/div[2]/div/select").nth(0)
         await elem.wait_for(state="visible", timeout=10000)
         await elem.select_option("")
         
-        # -> Open the status dropdown labeled 'Confirmed' on the gig detail page.
+        # -> Open the status dropdown currently showing 'Confirmed' so the status options appear, then select 'Paid'.
         # Draft Confirmed Paid Cancelled dropdown
         elem = page.get_by_text('Draft Confirmed Paid Cancelled', exact=True)
         await elem.click(timeout=10000)
-        
-        # -> Change the gig status by selecting 'Cancelled' from the status dropdown.
-        # Draft Confirmed Paid Cancelled dropdown
-        elem = page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div/div[2]/div/select").nth(0)
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.select_option("")
-        
-        # -> Select 'Cancelled' from the status dropdown labeled with the current gig status.
-        # Draft Confirmed Paid Cancelled dropdown
-        elem = page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div/div[2]/div/select").nth(0)
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.select_option("")
         
         # --> Assertions to verify final state
         
-        # --> Settlement breakdown is visible on the gig detail page.
+        # --> The settlement breakdown panel is visible (shows the 'Gig fee' label).
         # Assert-outcome: passed
-        # Assert: The settlement section displays the 'Gig fee' label.
-        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[2]/div/div[2]/div[1]/span[1]").nth(0)).to_contain_text("Gig fee", timeout=15000), "The settlement section displays the 'Gig fee' label."
+        # Assert: Settlement breakdown shows the 'Gig fee' label.
+        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[2]/div/div[2]/div[1]/span[1]").nth(0)).to_contain_text("Gig fee", timeout=15000), "Settlement breakdown shows the 'Gig fee' label."
         
-        # --> Updated gig status 'Cancelled' is displayed on the gig detail page.
+        # --> The gig status is updated and shown as 'Paid' in the status control/header.
         # Assert-outcome: passed
-        # Assert: The gig status control shows 'Cancelled'.
-        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[1]/div[2]/div[1]/select").nth(0)).to_contain_text("Cancelled", timeout=15000), "The gig status control shows 'Cancelled'."
+        # Assert: Status dropdown contains 'Paid', indicating the gig status is displayed as Paid.
+        await expect(page.locator("xpath=/html/body/div[2]/div/main/div/div[2]/div[1]/div[2]/div[1]/select").nth(0)).to_contain_text("Paid", timeout=15000), "Status dropdown contains 'Paid', indicating the gig status is displayed as Paid."
         await asyncio.sleep(5)
 
     finally:

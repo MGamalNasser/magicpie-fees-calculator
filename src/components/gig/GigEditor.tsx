@@ -40,7 +40,7 @@ function newGig(): Gig {
     venue: "",
     city: "",
     eventDate: new Date().toISOString().slice(0, 10),
-    gigType: "Wedding",
+    gigType: "Festival",
     totalFee: 0,
     soundcheckTime: "",
     showTime: "",
@@ -84,7 +84,6 @@ export function GigEditor({ gigId }: { gigId?: string }) {
   if (!gig) return null
 
   const typeExamples: Record<string, { name: string; client: string }> = {
-    Wedding: { name: t("e.g. Wedding of Sari & Raka"), client: t("e.g. Family of the bride") },
     "Private Event": { name: t("e.g. Rooftop birthday party"), client: t("e.g. Rizky's family") },
     Birthday: { name: t("e.g. Birthday at the garden"), client: t("e.g. Rizky's family") },
     Festival: { name: t("e.g. Djakarta Warehouse Project"), client: t("e.g. Ismaya Live") },
@@ -94,6 +93,12 @@ export function GigEditor({ gigId }: { gigId?: string }) {
   const example = typeExamples[gig.gigType]
   const eventNamePlaceholder = example?.name ?? t("Give this gig a name")
   const clientPlaceholder = example?.client ?? t("Who's paying for the show?")
+
+  const activeProductionRoles = data.productionRoles.filter((r) => r.active)
+  const productionRoleNames = activeProductionRoles.map((r) => r.name)
+  const expenseCategories = [...new Set([...EXPENSE_CATEGORIES, ...productionRoleNames])]
+  const isProductionCategory = (category: string) =>
+    PRODUCTION_CATEGORIES.includes(category) || productionRoleNames.includes(category)
 
   const patch = (p: Partial<Gig>) => {
     setDraft({ ...gig, ...p, updatedAt: new Date().toISOString() })
@@ -147,6 +152,17 @@ export function GigEditor({ gigId }: { gigId?: string }) {
       category: "Uang Kas",
       name: "",
       amount: 0,
+    }
+    patch({ expenses: [...gig.expenses, e] })
+  }
+  const addProductionRoleExpense = (roleId: string) => {
+    const role = data.productionRoles.find((r) => r.id === roleId)
+    if (!role) return
+    const e: Expense = {
+      id: crypto.randomUUID(),
+      category: role.name,
+      name: role.name,
+      amount: role.defaultFee,
     }
     patch({ expenses: [...gig.expenses, e] })
   }
@@ -546,14 +562,37 @@ export function GigEditor({ gigId }: { gigId?: string }) {
               description={t("Production and other costs. Production categories sit between crew and meals in the ledger.")}
               className="mb-4"
             />
+            {activeProductionRoles.length > 0 ? (
+              <div className="mb-3">
+                <Select
+                  value=""
+                  onChange={(ev) => ev.target.value && addProductionRoleExpense(ev.target.value)}
+                  className="w-56"
+                >
+                  <option value="">{t("Add production role…")}</option>
+                  {activeProductionRoles.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name} · {formatIDR(r.defaultFee)}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            ) : null}
             {gig.expenses.map((e) => (
               <div key={e.id} className="mb-2 flex flex-wrap items-center gap-2">
                 <Select
                   value={e.category}
-                  onChange={(ev) => setExpense(e.id, { category: ev.target.value })}
+                  onChange={(ev) => {
+                    const cat = ev.target.value
+                    const role = data.productionRoles.find((r) => r.active && r.name === cat)
+                    setExpense(e.id, {
+                      category: cat,
+                      ...(role && !e.amount ? { amount: role.defaultFee } : {}),
+                    })
+                  }}
                   className="w-40"
                 >
-                  {EXPENSE_CATEGORIES.map((c) => (
+                  {expenseCategories.map((c) => (
                     <option key={c} value={c}>
                       {c}
                     </option>
@@ -562,7 +601,7 @@ export function GigEditor({ gigId }: { gigId?: string }) {
                 <Input
                   value={e.name}
                   onChange={(ev) => setExpense(e.id, { name: ev.target.value })}
-                  placeholder={PRODUCTION_CATEGORIES.includes(e.category) ? t("e.g. Photographer") : t("e.g. Transport")}
+                  placeholder={isProductionCategory(e.category) ? t("e.g. Photographer") : t("e.g. Transport")}
                   className="w-40"
                 />
                 <div className="w-36">

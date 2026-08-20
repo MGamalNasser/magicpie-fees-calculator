@@ -41,7 +41,6 @@ const dict: Record<string, Entry> = {
   "Working…": { en: "Working…", id: "Memproses…" },
   "Create account": { en: "Create account", id: "Buat akun" },
   or: { en: "or", id: "atau" },
-  "Continue with Google": { en: "Continue with Google", id: "Lanjutkan dengan Google" },
   "Redirecting…": { en: "Redirecting…", id: "Mengalihkan…" },
   "Don't have an account?": { en: "Don't have an account?", id: "Belum punya akun?" },
   "Sign up": { en: "Sign up", id: "Daftar" },
@@ -51,12 +50,8 @@ const dict: Record<string, Entry> = {
     en: "Something went wrong. Please try again.",
     id: "Terjadi kesalahan. Coba lagi.",
   },
-  "Google sign-in is not configured yet.": {
-    en: "Google sign-in is not configured yet.",
-    id: "Login Google belum dikonfigurasi.",
-  },
 
-  // admin setup / invite
+  // admin setup
   "Admin setup": { en: "Admin setup", id: "Pengaturan admin" },
   "Create the master admin account.": {
     en: "Create the master admin account.",
@@ -72,23 +67,6 @@ const dict: Record<string, Entry> = {
   "An admin account already exists.": {
     en: "An admin account already exists.",
     id: "Akun admin sudah ada.",
-  },
-  "Accept invite": { en: "Accept invite", id: "Terima undangan" },
-  "You've been invited to Magicpie.": {
-    en: "You've been invited to Magicpie.",
-    id: "Kamu diundang ke Magicpie.",
-  },
-  "Set a password to activate your account.": {
-    en: "Set a password to activate your account.",
-    id: "Buat kata sandi untuk mengaktifkan akunmu.",
-  },
-  "This invite is invalid or has expired.": {
-    en: "This invite is invalid or has expired.",
-    id: "Undangan ini tidak valid atau sudah kedaluwarsa.",
-  },
-  "This invite has already been accepted.": {
-    en: "This invite has already been accepted.",
-    id: "Undangan ini sudah diterima.",
   },
   "This email already has an account.": {
     en: "This email already has an account.",
@@ -217,7 +195,6 @@ const dict: Record<string, Entry> = {
   "Saving…": { en: "Saving…", id: "Menyimpan…" },
   Details: { en: "Details", id: "Detail" },
   "Event name": { en: "Event name", id: "Nama acara" },
-  "e.g. Wedding of Sari & Raka": { en: "e.g. Wedding of Sari & Raka", id: "cth. Pernikahan Sari & Raka" },
   "e.g. Rooftop birthday party": {
     en: "e.g. Rooftop birthday party",
     id: "cth. Pesta ulang tahun di rooftop",
@@ -233,7 +210,6 @@ const dict: Record<string, Entry> = {
   "e.g. Birthday at the garden": { en: "e.g. Birthday at the garden", id: "cth. Ulang tahun di taman" },
   "e.g. Product launch night": { en: "e.g. Product launch night", id: "cth. Malam peluncuran produk" },
   "Give this gig a name": { en: "Give this gig a name", id: "Beri nama gig ini" },
-  "e.g. Family of the bride": { en: "e.g. Family of the bride", id: "cth. Keluarga mempelai" },
   "e.g. Rizky's family": { en: "e.g. Rizky's family", id: "cth. Keluarga Rizky" },
   "e.g. Ismaya Live": { en: "e.g. Ismaya Live", id: "cth. Ismaya Live" },
   "e.g. PT Maju Jaya": { en: "e.g. PT Maju Jaya", id: "cth. PT Maju Jaya" },
@@ -300,6 +276,7 @@ const dict: Record<string, Entry> = {
   "e.g. Photographer": { en: "e.g. Photographer", id: "cth. Fotografer" },
   "e.g. Transport": { en: "e.g. Transport", id: "cth. Transport" },
   "Add expense": { en: "Add expense", id: "Tambah biaya" },
+  "Add production role…": { en: "Add production role…", id: "Tambah peran produksi…" },
   Notes: { en: "Notes", id: "Catatan" },
 "e.g. Backline provided by the venue…": {
     en: "e.g. Backline provided by the venue…",
@@ -469,34 +446,10 @@ const dict: Record<string, Entry> = {
     en: "Default fee per production role, used when adding expenses to a gig.",
     id: "Honor default per peran produksi, dipakai saat menambah biaya ke gig.",
   },
-  Invites: { en: "Invites", id: "Undangan" },
-  "Invite personnel to sign in.": {
-    en: "Invite personnel to sign in.",
-    id: "Undang personel untuk masuk.",
-  },
-  "Send invite": { en: "Send invite", id: "Kirim undangan" },
-  "Email address": { en: "Email address", id: "Alamat email" },
-  "Link the invite to a band member.": {
-    en: "Link the invite to a band member.",
-    id: "Hubungkan undangan ke anggota band.",
-  },
-  "— No member —": { en: "— No member —", id: "— Tanpa anggota —" },
-  "(dev) No email provider configured — link shown instead.": {
-    en: "(dev) No email provider configured — link shown instead.",
-    id: "(dev) Penyedia email belum diatur — tautan ditampilkan sebagai ganti.",
-  },
-  "Invite link copied": { en: "Invite link copied", id: "Tautan undangan disalin" },
-  "Copy link": { en: "Copy link", id: "Salin tautan" },
-  Revoke: { en: "Revoke", id: "Cabut" },
-  "Invited": { en: "Invited", id: "Diundang" },
-  "Expires {date}": { en: "Expires {date}", id: "Berakhir {date}" },
-  "No invites yet.": { en: "No invites yet.", id: "Belum ada undangan." },
   "Save": { en: "Save", id: "Simpan" },
   "Add role": { en: "Add role", id: "Tambah peran" },
   "Role name": { en: "Role name", id: "Nama peran" },
   "Default pay": { en: "Default pay", id: "Honor default" },
-  "Accepted": { en: "Accepted", id: "Diterima" },
-  "Revoked": { en: "Revoked", id: "Dicabut" },
   "Production roles": { en: "Production roles", id: "Peran produksi" },
   "No production roles yet.": {
     en: "No production roles yet.",
@@ -536,8 +489,6 @@ const dict: Record<string, Entry> = {
   "Created itinerary": { en: "Created itinerary", id: "Membuat itinerary" },
   "Updated itinerary": { en: "Updated itinerary", id: "Memperbarui itinerary" },
   "Deleted itinerary": { en: "Deleted itinerary", id: "Menghapus itinerary" },
-  "Sent invite": { en: "Sent invite", id: "Mengirim undangan" },
-  "Revoked invite": { en: "Revoked invite", id: "Mencabut undangan" },
   "Exported PDF": { en: "Exported PDF", id: "Mengekspor PDF" },
   "Exported Excel": { en: "Exported Excel", id: "Mengekspor Excel" },
   "Exported itinerary PDF": { en: "Exported itinerary PDF", id: "Mengekspor PDF itinerary" },
@@ -546,9 +497,6 @@ const dict: Record<string, Entry> = {
     en: "Production roles feed the expense picker in the gig editor.",
     id: "Peran produksi menjadi pilihan biaya di editor gig.",
   },
-  "Copy invite link": { en: "Copy invite link", id: "Salin tautan undangan" },
-  "Invite sent": { en: "Invite sent", id: "Undangan terkirim" },
-  "Expires": { en: "Expires", id: "Berakhir" },
 
   // member dashboard
   "Your payouts across all gigs.": {
